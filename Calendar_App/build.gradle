@@ -1,0 +1,53 @@
+plugins {
+    id 'application'
+    id "org.javacc.javacc" version "3.0.0"
+    id 'pmd'
+
+
+}
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+dependencies {
+    implementation project(':lib')
+}
+compileJavacc {
+    inputDirectory = file('src/main/java/edu/curtin/parser')
+    outputDirectory = file('src/main/java/edu/curtin/parser')
+}
+application {
+    mainClass = 'edu.curtin.calendarApp.Main'
+}
+
+run {
+    standardInput = System.in
+    if (project.hasProperty("appArgs")) {
+        args Eval.me(appArgs)
+    }
+}
+
+
+processResources {
+    duplicatesStrategy = 'exclude'
+}
+
+
+
+pmd {
+    consoleOutput = true
+    toolVersion = '7.0.0-rc4'
+    rulesMinimumPriority = 5
+    ruleSets = []
+    ruleSetFiles = files('saed-pmd-rules.xml')
+}

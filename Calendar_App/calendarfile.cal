@@ -1,0 +1,21 @@
+event 2023-11-26 14:21:00 60 "Morning Meeting"
+event 2023-11-25 09:59:59 60 "Morning Meeting 22"
+event 2023-12-02 14:00:00 120 "Project Discussion"
+event 2023-12-03 all-day "Team Building Day"
+event 2023-12-04 16:00:00 90 "Client Presentation"
+event 2023-12-05 all-day "Maintenance Day"
+event 2023-12-06 10:00:00 30 "Quick Sync with Team"
+event 2023-12-07 13:00:00 60 "Lunch with Client"
+event 2023-12-08 all-day "Holiday"
+event 2023-12-09 15:00:00 45 "Interview Session"
+event 2023-12-10 11:00:00 60 "Department Meeting"
+event 2023-12-11 all-day "Off-site Meeting"
+event 2023-12-12 09:30:00 90 "Strategy Planning"
+event 2023-12-13 all-day "Conference"
+event 2023-12-14 14:00:00 120 "Workshop"
+event 2023-12-14 00:50:29 60 "Product Review"
+
+plugin edu.curtin.calplugins.Repeat { startDate: "2023-11-26", title: "plugin | AllDay - every week", repeat: "7" }
+plugin edu.curtin.calplugins.Repeat { startDate: "2023-12-14", startTime: "00:18:00", duration: "48", title: "plugin2 | Every 3 Days", repeat: "3" }
+plugin edu.curtin.calplugins.Notify { text: "AllDay" }
+plugin edu.curtin.calplugins.Notify { text: "Product" }

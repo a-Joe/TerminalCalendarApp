@@ -1,0 +1,95 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(CalenderParser)
+package edu.curtin.parser;
+import edu.curtin.calendarApp.PluginInfo;
+import edu.curtin.calendarApp.Event;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class CalenderParser {
+    private ArrayList<Event> events = new ArrayList<>();
+    private ArrayList<PluginInfo> plugins = new ArrayList<>();
+
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
+    public ArrayList<PluginInfo> getPlugins() {
+        return plugins;
+    }
+
+}
+PARSER_END(CalenderParser)
+
+SKIP : { " " | "\t" | "\n" | "\r" | "\f" }
+
+TOKEN : { < EVENT: "event" > }
+TOKEN : { < DATE: (["0"-"9"])+ "-" (["0"-"9"])+ "-" (["0"-"9"])+ > }
+TOKEN : { < TIME: ( "0" (["0"-"9"]) | "1" (["0"-"9"]) | "2" (["0"-"3"]) ) ":" 
+           (["0"-"5"])(["0"-"9"]) ":" 
+           (["0"-"5"])(["0"-"9"]) >}
+TOKEN : { < NUMBER: (["0"-"9"])+ > }
+TOKEN : {< STRING_LITERAL: "\"" (~["\""])* "\"" > }
+TOKEN : { < ALL_DAY: "all-day" > }
+
+
+// PLUGIN TOKENS
+TOKEN : { < PLUGIN: "plugin" > }
+TOKEN : { < KEY: (["a"-"z","A"-"Z","_"])(["a"-"z","A"-"Z","_","0"-"9"])* > }
+TOKEN : { < CLASSNAME: (<IDENTIFIER> ".")* <IDENTIFIER> > }
+TOKEN : { < VALUE: <STRING_LITERAL> > }
+TOKEN : { < IDENTIFIER: (["a"-"z"] | ["A"-"Z"] | ["_"]) (["a"-"z"] | ["A"-"Z"] | ["_"] | ["0"-"9"])* > }
+TOKEN : { < CURLY_OPEN: "{" > }
+TOKEN : { < CURLY_CLOSE: "}" > }
+TOKEN : { < COLON: ":" > }
+TOKEN : { < COMMA: "," > }
+
+void File() : {} { ( Event() | Plugin() )* <EOF> }
+
+
+void Event() : { Token date, time = null, duration = null, title; } {
+    <EVENT> date=<DATE> 
+    ( 
+        (time=<TIME> duration=<NUMBER>) 
+        | 
+        <ALL_DAY> 
+    ) 
+    title=<STRING_LITERAL> 
+    {
+        Event newEvent;
+        if (time != null && duration != null) {
+            newEvent = new Event(date.image, title.image.substring(1, title.image.length()-1), time.image, duration.image);
+        } else {
+            newEvent = new Event(date.image, title.image.substring(1, title.image.length()-1));
+        }
+        events.add(newEvent); // Add the created event to the list
+    }
+}
+
+void Plugin() : { Token className; Token key, value; HashMap<String, String> arguments = new HashMap<>(); } {
+    <PLUGIN> className=<CLASSNAME> <CURLY_OPEN> 
+    (
+        key=<KEY> <COLON> value=<STRING_LITERAL> 
+        {
+            arguments.put(key.image, value.image.substring(1, value.image.length()-1));
+        }
+        ( <COMMA> key=<KEY> <COLON> value=<STRING_LITERAL> 
+            {
+                arguments.put(key.image, value.image.substring(1, value.image.length()-1));
+            }
+        )*
+    ) <CURLY_CLOSE> 
+    {
+        PluginInfo pluginInfo = new PluginInfo(className.image, arguments);
+        plugins.add(pluginInfo); // Add the created PluginInfo to the list
+    }
+}
+
+
+
+
+
+

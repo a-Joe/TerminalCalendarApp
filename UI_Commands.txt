@@ -1,0 +1,15 @@
+"+d":
+"+w":
+"+m":
+"+y":
+"-d":
+"-w":
+"-m":
+"-y":
+"t":
+
+
+
+"-locale" // Change local
+"-s"      // Search
+"exit":   // Exit app
